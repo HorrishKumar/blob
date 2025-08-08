@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Blobcat Builder</title>
+  <style>
+    body {
+      font-family: 'Comic Sans MS', sans-serif;
+      background-color: #fef6f6;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    .blobcat {
+      width: 300px;
+      height: 300px;
+      margin: 1rem auto;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      border: 1px solid #ccc;
+      border-radius: 15px;
+      background-color: #fff;
+    }
+
+    .controls {
+      margin: 2rem auto;
+      max-width: 400px;
+      text-align: left;
+    }
+
+    label {
+      display: block;
+      margin: 0.5rem 0 0.2rem;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 1.5rem;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: #5cabff;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #4897e0;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Blobcat Builder 🐾</h1>
+  <div class="blobcat" id="blobcatPreview"></div>
+
+  <div class="controls">
+    <label for="color">Choose Color:</label>
+    <select id="color">
+      <option value="blue">Blue</option>
+      <option value="pink">Pink</option>
+      <option value="gradient">Gradient</option>
+      <option value="light blue">Light Blue</option>
+    </select>
+
+    <label for="accessory">Accessory:</label>
+    <select id="accessory">
+      <option value="none">None</option>
+      <option value="party hat">Party Hat</option>
+      <option value="glasses">Glasses</option>
+      <option value="bowtie">Bowtie</option>
+    </select>
+
+    <label for="expression">Mood:</label>
+    <select id="expression">
+      <option value="neutral">Neutral</option>
+      <option value="happy">Happy</option>
+      <option value="angry">Angry</option>
+      <option value="sad">Sad</option>
+    </select>
+
+    <label for="customPrompt">Or describe your blobcat:</label>
+    <input type="text" id="customPrompt" placeholder="e.g. A rainbow blobcat with a crown" />
+
+    <button onclick="generateBlobcat()">🎨 Generate My Blobcat</button>
+  </div>
+
+  <script>
+    async function generateBlobcat() {
+      const color = document.getElementById('color').value;
+      const accessory = document.getElementById('accessory').value;
+      const expression = document.getElementById('expression').value;
+      const customPrompt = document.getElementById('customPrompt').value;
+
+      const prompt = customPrompt || `A cute blobcat in ${color} color with ${accessory}, feeling ${expression}`;
+
+      document.getElementById('blobcatPreview').style.backgroundImage = "none";
+      document.getElementById('blobcatPreview').innerText = "Generating...";
+
+      const res = await fetch("/api/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt })
+      });
+
+      const data = await res.json();
+      document.getElementById('blobcatPreview').innerText = "";
+      document.getElementById('blobcatPreview').style.backgroundImage = `url('${data.image}')`;
+    }
+  </script>
+</body>
+</html>
